@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Register Audition</title>
+
+    <base href="/" />
+    <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <style>
+        body {
+            background-color: #e9ebee;
+        }
+
+        .card {
+            margin-top: 1em;
+        }
+
+        /* IMG displaying */
+
+        .person-card {
+            margin-top: 5em;
+            padding-top: 5em;
+        }
+
+        .person-card .card-title {
+            text-align: center;
+        }
+
+        .person-card .person-img {
+            width: 10em;
+            position: absolute;
+            top: -5em;
+            left: 50%;
+            margin-left: -5em;
+            border-radius: 100%;
+            overflow: hidden;
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" style="margin-top: 1em;">
+        <!-- Sign up form -->
+        <form>
+            <!-- Sign up card -->
+            <div class="card person-card">
+                <div class="card-body">
+                    <!-- Sex image -->
+                    <img id="img_profile" class="person-img" src="https://visualpharm.com/assets/217/Life%20Cycle-595b40b75ba036ed117d9ef0.svg">
+                    <h2 id="who_message" class="card-title">Audition</h2>
+                    <!-- First row (on medium screen) -->
+                    <div class="row">
+                        <div class="form-group col-md-2">
+                            <select id="input_sex" class="form-control">
+                                <option value="Mr.">Mr.</option>
+                                <option value="Ms.">Ms.</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <input id="first_name" type="text" class="form-control" placeholder="First name">
+                            <div id="first_name_feedback" class="invalid-feedback">
+
+                            </div>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <input id="last_name" type="text" class="form-control" placeholder="Last name">
+                            <div id="last_name_feedback" class="invalid-feedback">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6" style="padding:0.5em;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">How to contact you ?</h2>
+                            <div class="form-group">
+                                <label for="email" class="col-form-label">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="example@gmail.com" required>
+                                <div class="email-feedback">
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tel" class="col-form-label">Phone number</label>
+                                <input type="text" class="form-control" id="tel" placeholder="07112222222" required>
+                                <div class="phone-feedback">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Basic Details</h2>
+                            <div class="form-group">
+                                <label for="Hometown" class="col-form-label">Hometown</label>
+                                <input type="text" class="form-control" id="hometown" placeholder="Type your password" required>
+
+
+                            </div>
+                            <div class="form-group">
+                                <label for="Birthday" class="col-form-label">Birthday</label>
+                                <input type="date" class="form-control" id="birthday" placeholder="Type your password again" required>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <a href="#" class="btn-face m-b-10" id="fb-link">
+                        <i class="fa fa-facebook-official"></i>
+                        Get User Info from Facebook
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-primary btn-sm btn-block">Submit</button>
+                </div>
+
+            </div>
+
+    </div>
+
+    </form>
+    </div>
+
+
+
+</body>
+
+<script>
+		window.onload = function() {
+            loadUriToLink();
+            var url_string = window.location.href;
+            var url = new URL(url_string);
+            var path = url.pathname;
+            if(path=="/facebookapp/callback"){
+                getAuthorizationcode();
+            } 
+		};
+
+		function loadUriToLink(){
+			var clientId = 278094523037135;
+			var redirectUrl = "http://localhost:4200/facebookapp/callback";
+			redirectUrl = encodeURI(redirectUrl);
+			var link = document.getElementById("fb-link");
+			var scope = `public_profile user_friends email user_birthday user_hometown user_photos`
+			link.href = `http://www.facebook.com/dialog/oauth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUrl}&scope=${scope}`;
+        }
+
+        function getAuthorizationcode() {
+            var url_string = window.location.href;
+            var url = new URL(url_string);
+            var authorizationCode = url.searchParams.get("code");
+            getAccessToken(authorizationCode);
+        }
+
+        function getAccessToken(authorizationCode) {
+
+            var clientId = 278094523037135;
+            var appSecret = "2c256f02832c18f9b38656a4bb894c91";
+            var authorizationBasic = window.btoa(clientId + ':' + appSecret);
+            var redirectUrl = "http://localhost:4200/facebookapp/callback";
+            redirectUrl = encodeURI(redirectUrl);
+           
+            var request = new XMLHttpRequest();
+            request.open('GET', `https://graph.facebook.com/oauth/access_token?client_id=${clientId}&client_secret=${appSecret}&grant_type=authorization_code&redirect_uri=${redirectUrl}&code=${authorizationCode}`, true);
+            request.send();
+
+            request.onreadystatechange = function () {
+             
+                if (request.readyState == 4 && request.status == 200) {
+                    var accessToken=JSON.parse(this.responseText);
+                    getUserId(accessToken);
+                }
+            }
+
+        }
+
+
+        function getUserId(token){
+
+            var request = new XMLHttpRequest();
+            request.open('GET', encodeURI(`https://graph.facebook.com/v2.8/me?fields=id,name`), true);
+            request.setRequestHeader('Authorization', `Bearer ${token.access_token}`);
+            request.send();
+            request.onreadystatechange = function () {
+             
+                if (request.readyState == 4 && request.status == 200) {
+                    var info=JSON.parse(this.responseText);
+                    var userId = info["id"];
+                    console.log(info);
+                    getUserInfo(userId,token);
+
+                }
+            }
+        }
+
+
+        function getUserInfo(id,token){
+
+        var request = new XMLHttpRequest();
+        var fields  = `birthday,first_name,last_name,gender,hometown,email,friends,likes,photos,posts,picture.type(large)`;
+        request.open('GET', `https://graph.facebook.com/v2.11/${id}?fields=${fields}&access_token=${token.access_token}`, true);
+        request.send();
+
+            request.onreadystatechange = function () {
+            
+                if (request.readyState == 4 && request.status == 200) {
+                    var info=JSON.parse(this.responseText);
+
+                    var firstname = document.getElementById("first_name");
+                    var lastname = document.getElementById("last_name");
+                    var birthday = document.getElementById("birthday");
+                    var hometown = document.getElementById("hometown");
+                    var email = document.getElementById("email");
+                    var telephone = document.getElementById("telephone");
+                    var picture = document.getElementById("img_profile");
+
+                    firstname.value=info["first_name"];
+                    lastname.value=info["last_name"];
+                    var birthdayEdit = info["birthday"].split("/");
+                    birthdayEdit = birthdayEdit[2]+"-"+birthdayEdit[1]+"-"+birthdayEdit[0];
+                    birthday.value = birthdayEdit;
+                    hometown.value=info["hometown"]["name"];
+                    email.value=info["email"];
+                    picture.src=info["picture"]["data"]["url"];
+
+                }
+            }
+        }
+
+        
+    </script>
+
+</html>
