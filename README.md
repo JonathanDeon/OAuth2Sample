@@ -1,3 +1,5 @@
 # OAuth2Sample
 
-npm install - > node server => go to localhost:4200 from browser
+1) npm install in a cmd to install all the dependencies
+2) node server to run the server
+3) go to localhost:4200 from browser
